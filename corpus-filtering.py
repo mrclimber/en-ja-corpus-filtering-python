@@ -26,8 +26,8 @@ def del_string_length(f_in_en, f_in_ja, f_out_en, f_out_ja):
 
 def del_subword(f_in_en, f_in_ja, f_out_en, f_out_ja):
 
-    model_en = spm.SentencePieceProcessor(model_file = "/home/honda/test/data/spm32k.en.model")
-    model_ja = spm.SentencePieceProcessor(model_file = "/home/honda/test/data/spm32k.ja.model")
+    model_en = spm.SentencePieceProcessor(model_file = "/home/honda/data/spm32k.en.model")
+    model_ja = spm.SentencePieceProcessor(model_file = "/home/honda/data/spm32k.ja.model")
 
     cnt = 0
     for en_text, ja_text in zip(f_in_en, f_in_ja):
@@ -96,7 +96,7 @@ def del_mUSE(f_in_en, f_in_ja, f_out_en, f_out_ja):
 def del_LaBSE(f_in_en, f_in_ja, f_out_en, f_out_ja):
 
     def normalization(embeds):
-        norms = np.llsinalg.norm(embeds, 2, axis=1, keepdims=True)
+        norms = np.linalg.norm(embeds, 2, axis=1, keepdims=True)
         return embeds/norms
 
     preprocessor = hub.KerasLayer("https://tfhub.dev/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2")
@@ -125,14 +125,12 @@ def del_LaBSE(f_in_en, f_in_ja, f_out_en, f_out_ja):
 def main():
 
     args = sys.argv
-
     for s in args[1:]:
-        if s != "A" and s != "B" and s != "C" and s != "D" and s != "E" and s!= "F":
+        if s != "string_length" and s != "subword" and s != "character_type" and s != "langdetect" and s != "mUSE" and s!= "LaBSE":
             print("正しい手法番号が選択されていません")
             sys.exit()
 
     file_name = "/home/honda/test/data/train"
-    #file_name = "/home/honda/test/en-ja.test" #テスト用
     
     for i, s in enumerate(args[1:]):
         if i == 0:
@@ -145,22 +143,22 @@ def main():
         f_out_en = open(file_name + "-result" + str(i+1) + ".en", 'w')
         f_out_ja = open(file_name + "-result" + str(i+1) + ".ja", 'w')
 
-        if s == "A":# string_length
+        if s == "string_length":
             cnt = del_string_length(f_in_en, f_in_ja, f_out_en, f_out_ja)
             print("string_length 実行後の文対量：" + str(cnt))
-        elif s == "B":
+        elif s == "subword":
             cnt = del_subword(f_in_en, f_in_ja, f_out_en, f_out_ja)
             print("subword 実行後の文対量：" + str(cnt))
-        elif s == "C":
+        elif s == "character_type":
             cnt = del_character_type(f_in_en, f_in_ja, f_out_en, f_out_ja)
             print("character_type 実行後の文対量：" + str(cnt))
-        elif s == "D":
+        elif s == "langdetect":
             cnt = del_langdetect(f_in_en, f_in_ja, f_out_en, f_out_ja)
             print("langdetect 実行後の文対量：" + str(cnt))
-        elif s == "E":
+        elif s == "mUSE":
             cnt = del_mUSE(f_in_en, f_in_ja, f_out_en, f_out_ja)
             print("mUSE 実行後の文対量：" + str(cnt))
-        elif s == "F":
+        elif s == "LaBSE":
             cnt = del_LaBSE(f_in_en, f_in_ja, f_out_en, f_out_ja)
             print("LaBSE 実行後の文対量：" + str(cnt))
         
