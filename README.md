@@ -19,7 +19,7 @@ $ python data/train-spm.py ja
 ### 実行
 以下のようなコマンドを入力して実行する。
 ```bash
-python corpus-filtering.py string_length subword
+$ python corpus-filtering.py string_length subword
 ```
 ノイズ削除方法は複数選択が可能で、以下の表にノイズの削除方法とそれに対応したコマンドライン引数の入力を示す。
 |  ノイズの削除方法  |  コマンドライン引数  |
