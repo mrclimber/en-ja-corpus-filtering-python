@@ -76,7 +76,7 @@ def del_langdetect(f_in_en, f_in_ja, f_out_en, f_out_ja):
     return cnt
 
 
-def del_mUSE(f_in_en, f_in_ja, f_out_en, f_out_ja):
+def del_mUSE(f_in_en, f_in_ja, f_out_en, f_out_ja, f_out_mUSE_sim):
     
     embed = hub.load("https://tfhub.dev/google/universal-sentence-encoder-multilingual/3")
     
@@ -89,11 +89,15 @@ def del_mUSE(f_in_en, f_in_ja, f_out_en, f_out_ja):
         if 0.4 <= similarity < 0.7:
             f_out_en.write(en_text)
             f_out_ja.write(ja_text)
+            f_out_mUSE_sim.write(str(similarity[0][0]) + "\n")
+            f_out_mUSE_sim.write(en_text)
+            f_out_mUSE_sim.write(ja_text)
+            f_out_mUSE_sim.write(s)
             cnt += 1
 
     return cnt
 
-def del_LaBSE(f_in_en, f_in_ja, f_out_en, f_out_ja):
+def del_LaBSE(f_in_en, f_in_ja, f_out_en, f_out_ja, f_out_LaBSE_sim):
 
     def normalization(embeds):
         norms = np.linalg.norm(embeds, 2, axis=1, keepdims=True)
@@ -117,6 +121,9 @@ def del_LaBSE(f_in_en, f_in_ja, f_out_en, f_out_ja):
         if 0.7 <= similarity < 0.9:
             f_out_en.write(en_text)
             f_out_ja.write(ja_text)
+            f_out_LaBSE_sim.write(str(similarity[0][0]) + "\n")
+            f_out_LaBSE_sim.write(en_text)
+            f_out_LaBSE_sim.write(ja_text)
             cnt += 1
 
     return cnt
@@ -156,10 +163,14 @@ def main():
             cnt = del_langdetect(f_in_en, f_in_ja, f_out_en, f_out_ja)
             print("langdetect 実行後の文対量：" + str(cnt))
         elif s == "mUSE":
-            cnt = del_mUSE(f_in_en, f_in_ja, f_out_en, f_out_ja)
+            f_out_mUSE_sim= open(file_name + "-mUSE-similarity", 'w')
+            cnt = del_mUSE(f_in_en, f_in_ja, f_out_en, f_out_ja, f_out_mUSE_sim)
+            f_out_mUSE_sim.close()
             print("mUSE 実行後の文対量：" + str(cnt))
         elif s == "LaBSE":
-            cnt = del_LaBSE(f_in_en, f_in_ja, f_out_en, f_out_ja)
+            f_out_LaBSE_sim = open(file_name + "-LaBSE-similarity", 'w')
+            cnt = del_LaBSE(f_in_en, f_in_ja, f_out_en, f_out_ja, f_out_LaBSE_sim)
+            f_out_LaBSE_sim.close()
             print("LaBSE 実行後の文対量：" + str(cnt))
         
         f_in_en.close()
